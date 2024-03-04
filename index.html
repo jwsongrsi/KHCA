@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,87 +27,79 @@
             color: #333;
         }
 
-        form {
-            margin-bottom: 20px;
+        p {
+            text-align: center;
+            color: #666;
+            padding: 0 20px;
         }
 
-        label {
+        .quiz-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .quiz-options label {
             font-weight: bold;
             color: #333;
         }
 
-        input[type="text"] {
-            width: calc(100% - 100px);
+        .quiz-options input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .quiz-options input[type="text"] {
             padding: 8px;
-            margin-bottom: 10px;
+            margin: 0 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
         }
 
         button {
-            padding: 8px 16px;
+            display: block;
+            width: 200px;
+            padding: 8px 0;
             background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin: 0 auto;
         }
 
         button:hover {
             background-color: #0056b3;
         }
 
-        #answerContainer {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
         footer {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            background-color: #f4f4f4;
-            padding: 10px;
+            text-align: center;
+            margin-top: 40px;
             font-size: 0.8em;
-            color: #333;
-            border-top-left-radius: 8px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>형사판례 퀴즈</h1>
-        <form id="quizForm">
-            <div id="questionContainer"></div>
-            <label for="answerInput">답변:</label>
-            <input type="text" id="answerInput" name="answerInput">
-            <button type="button" onclick="submitAnswer()">제출</button>
-            <div>
-                <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
-                <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
-            </div>
-        </form>
-        <div id="answerContainer"></div>
+        <p>*형법, 형사소송법 판례 공부를 위한 퀴즈 프로그램입니다.</p>
+        <div class="quiz-options">
+            <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
+            <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
+            <label>문제 수: <input type="text" id="answerInput" name="answerInput" placeholder="1~200"></label>
+        </div>
+        <button type="button" onclick="startQuiz()">시작하기</button>
     </div>
     <footer>
         경희대학교 로스쿨 형사법학회
     </footer>
     <script>
-        function submitAnswer() {
-            var userAnswer = document.getElementById("answerInput").value;
-            var response = {
-                correct: true,
-                correctAnswer: "정답입니다!",
-                referenceLink: "https://example.com"
-            };
-            var answerContainer = document.getElementById("answerContainer");
-            answerContainer.innerHTML = "<p>" + response.correctAnswer + "</p>";
-            answerContainer.innerHTML += "<p>참조 링크: <a href='" + response.referenceLink + "'>" + response.referenceLink + "</a></p>";
-            document.getElementById("quizForm").reset();
+        function startQuiz() {
+            // Quiz starting logic here
+            alert("퀴즈를 시작합니다!");
         }
     </script>
 </body>
