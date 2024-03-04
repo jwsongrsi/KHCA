@@ -89,6 +89,8 @@
         <div class="quiz-options">
             <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
             <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
+        </div>
+        <div class="quiz-options"> <!-- 새로운 div 태그를 추가하여 문제 수 입력 부분을 별도의 줄로 분리합니다. -->
             <label>문제 수: <input type="text" id="answerInput" name="answerInput" placeholder="1~200"></label>
         </div>
         <button type="button" onclick="startQuiz()">시작하기</button>
@@ -96,11 +98,5 @@
     <footer>
         경희대학교 로스쿨 형사법학회
     </footer>
-    <script>
-        function startQuiz() {
-            // Quiz starting logic here
-            alert("퀴즈를 시작합니다!");
-        }
-    </script>
 </body>
 </html>
