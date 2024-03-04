@@ -5,7 +5,7 @@ import os
 import webbrowser
 import re
 
-question_count = 10
+question_count = 20
 
 def extract_case_numbers(txt_file_path):
     case_numbers = []
@@ -21,7 +21,7 @@ def merge_json_files(directory, txt_directory):
 
     all_case_numbers = []
     for txt_filename in os.listdir(txt_directory):
-        if (txt_filename.endswith('.txt')) & ('내신' in txt_filename):
+        if (txt_filename.endswith('.txt')) & ('형사소송법' in txt_filename):
             txt_file_path = os.path.join(txt_directory, txt_filename)          
             case_numbers = extract_case_numbers(txt_file_path)
             
