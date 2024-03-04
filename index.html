@@ -98,5 +98,62 @@
     <footer>
         경희대학교 로스쿨 형사법학회
     </footer>
+
+    <script>
+        async function startQuiz() {
+            const quizOptions = document.querySelectorAll('input[name="standard_cases"]:checked');
+            const numberOfQuestions = document.getElementById('answerInput').value;
+            let selectedOptions = [];
+            quizOptions.forEach((option) => {
+                selectedOptions.push(option.value);
+            });
+
+            const baseURL = "https://api.github.com/repos/jwsongrsi/criminalstudy/contents/allquiz";
+            const headers = {
+                "Accept": "application/vnd.github.v3+json"
+            };
+
+            try {
+                // GitHub API로부터 파일 목록 가져오기
+                const response = await fetch(baseURL, { headers: headers });
+                const data = await response.json();
+
+                let quizzes = [];
+                for (const file of data) {
+                    // JSON 파일만 처리
+                    if (file.name.endsWith('.json')) {
+                        const fileResponse = await fetch(file.download_url);
+                        const fileData = await fileResponse.json();
+                        quizzes = quizzes.concat(fileData);
+                    }
+                }
+
+                // 선택된 옵션에 해당하는 문제만 필터링
+                quizzes = quizzes.filter(quiz => selectedOptions.includes(quiz.category));
+
+                // 랜덤으로 문제 선택
+                let selectedQuizzes = [];
+                for (let i = 0; i < Math.min(numberOfQuestions, quizzes.length); i++) {
+                    const randomIndex = Math.floor(Math.random() * quizzes.length);
+                    selectedQuizzes.push(quizzes[randomIndex]);
+                    quizzes.splice(randomIndex, 1); // 선택된 문제는 제거
+                }
+
+                // 선택된 문제를 화면에 표시
+                displayQuizzes(selectedQuizzes);
+            } catch (error) {
+                console.error("Quiz loading failed:", error);
+            }
+        }
+
+        function displayQuizzes(quizzes) {
+            const container = document.querySelector('.container');
+            quizzes.forEach((quiz, index) => {
+                const element = document.createElement('div');
+                element.innerHTML = `<p>${index + 1}. ${quiz.question}</p>`;
+                container.appendChild(element);
+            });
+        }
+    </script>
 </body>
 </html>
