@@ -207,8 +207,8 @@ def run_quiz(filepath):
             court = "대법원" if "대법원" in case['N'] else "헌법재판소" if "헌법재판소" in case['N'] else ""
             casenumber = case_number(case['N'])
 
-            link = "https://casenote.kr/" + court + "/" + casenumber
-            #"https://bigcase.ai/cases/" + court + "/" + casenumber
+            #link = "https://casenote.kr/" + court + "/" + casenumber
+            link = "https://bigcase.ai/cases/" + court + "/" + casenumber
 
             incorrect_answers.append((i, case['Q'], case['A'], link))
             format_print(case['A'], prefix="정답:")
