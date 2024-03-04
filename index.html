@@ -98,44 +98,5 @@
     <footer>
         경희대학교 로스쿨 형사법학회
     </footer>
-
-    <script>
-        async function startQuiz() {
-            const repoUrl = 'https://api.github.com/repos/jwsongrsi/criminalstudy/contents/allquiz';
-            const numberOfQuestions = document.getElementById('answerInput').value || 5; // 기본값을 5로 설정
-            
-            try {
-                const repoResponse = await fetch(repoUrl);
-                const fileList = await repoResponse.json();
-                const quizFiles = fileList.filter(file => file.name.endsWith('.json')).map(file => file.download_url);
-    
-                const questions = await Promise.all(quizFiles.map(url => fetch(url).then(response => response.json())));
-                const combinedData = questions.flat();
-                const selectedQuestions = selectRandomQuestions(combinedData, parseInt(numberOfQuestions, 10));
-    
-                displayQuestions(selectedQuestions);
-            } catch (error) {
-                console.error('Error loading quizzes:', error);
-            }
-        }
-    
-        function selectRandomQuestions(questions, numberOfQuestions) {
-            const shuffled = questions.sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, numberOfQuestions);
-        }
-    
-        function displayQuestions(questions) {
-            const container = document.getElementById('quizContainer');
-            container.innerHTML = ''; // Clear previous questions
-            questions.forEach(question => {
-                const questionElem = document.createElement('div');
-                questionElem.innerText = question.question; // 각 질문의 'question' 속성을 사용
-                container.appendChild(questionElem);
-            });
-        }
-    
-        document.getElementById('startQuiz').addEventListener('click', startQuiz);
-    </script>
-    
 </body>
 </html>
