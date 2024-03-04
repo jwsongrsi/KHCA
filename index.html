@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>퀴즈 프로그램</title>
+    <title>형사판례 퀴즈</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,50 +64,48 @@
             border-radius: 8px;
             background-color: #f9f9f9;
         }
+
+        footer {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            background-color: #f4f4f4;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #333;
+            border-top-left-radius: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>퀴즈 프로그램</h1>
+        <h1>형사판례 퀴즈</h1>
         <form id="quizForm">
-            <!-- 퀴즈 질문이 표시될 곳 -->
             <div id="questionContainer"></div>
-
-            <!-- 답변 입력 폼 -->
             <label for="answerInput">답변:</label>
             <input type="text" id="answerInput" name="answerInput">
             <button type="button" onclick="submitAnswer()">제출</button>
-            
-            <!-- 체크박스 -->
             <div>
                 <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
                 <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
             </div>
         </form>
-
-        <!-- 정답 및 참조 링크가 표시될 곳 -->
         <div id="answerContainer"></div>
     </div>
-
+    <footer>
+        경희대학교 로스쿨 형사법학회
+    </footer>
     <script>
         function submitAnswer() {
-            // 사용자가 입력한 답변 가져오기
             var userAnswer = document.getElementById("answerInput").value;
-
-            // AJAX 또는 fetch를 사용하여 사용자 답변을 서버로 전송하고 결과를 받아올 수 있습니다.
-            // 결과를 받아오는 과정은 생략하고, 예시로 고정된 데이터를 사용하여 결과를 표시합니다.
             var response = {
                 correct: true,
                 correctAnswer: "정답입니다!",
                 referenceLink: "https://example.com"
             };
-
-            // 정답 및 참조 링크를 표시
             var answerContainer = document.getElementById("answerContainer");
             answerContainer.innerHTML = "<p>" + response.correctAnswer + "</p>";
             answerContainer.innerHTML += "<p>참조 링크: <a href='" + response.referenceLink + "'>" + response.referenceLink + "</a></p>";
-
-            // 퀴즈 폼 초기화
             document.getElementById("quizForm").reset();
         }
     </script>
