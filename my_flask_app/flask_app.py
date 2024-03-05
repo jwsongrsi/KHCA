@@ -24,7 +24,7 @@ def merge_json_files(directory, txt_directory, selected_cases):
 
     all_case_numbers = []
     for txt_filename in os.listdir(txt_directory):
-        if (txt_filename.endswith('.txt')) & (txt_filename in selected_cases):
+        if (txt_filename.endswith('.txt')) & (txt_filename.replace(".txt", "") in selected_cases):
             txt_file_path = os.path.join(txt_directory, txt_filename)          
             case_numbers = extract_case_numbers(txt_file_path)
             
