@@ -24,7 +24,7 @@ def merge_json_files(directory, txt_directory, selected_cases):
 
     all_case_numbers = []
     for txt_filename in os.listdir(txt_directory):
-        if (txt_filename.endswith('.txt')) & (txt_filename.replace(".txt", "") in selected_cases):
+        if (txt_filename.endswith('.txt')): # & (txt_filename.replace(".txt", "") in selected_cases)
             txt_file_path = os.path.join(txt_directory, txt_filename)          
             case_numbers = extract_case_numbers(txt_file_path)
             
@@ -95,4 +95,4 @@ def start_quiz():
     #print(selected_cases, num_questions, password)
     
     # 처리 결과에 따라 다른 페이지로 리디렉트하거나 메시지를 보여줄 수 있음
-    return selected_cases, str(len(data))  # 처리 결과를 간단한 메시지로 반환
+    return str(len(data))  # 처리 결과를 간단한 메시지로 반환
