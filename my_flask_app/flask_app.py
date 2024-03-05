@@ -19,12 +19,12 @@ def extract_case_numbers(txt_file_path):
             case_numbers.append(case_number)
     return case_numbers
 
-def merge_json_files(directory, txt_directory):
+def merge_json_files(directory, txt_directory, selected_cases):
     merged_data = []
 
     all_case_numbers = []
     for txt_filename in os.listdir(txt_directory):
-        if (txt_filename.endswith('.txt')):
+        if (txt_filename.endswith('.txt')) & (txt_filename in selected_cases):
             txt_file_path = os.path.join(txt_directory, txt_filename)          
             case_numbers = extract_case_numbers(txt_file_path)
             
@@ -80,12 +80,6 @@ def is_correct(user_answer, correct_answer):
     except:
         return True
 
-def load_data(directory):
-    merged_json_data = merge_json_files(directory, bankpath)
-
-    return merged_json_data
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -95,10 +89,10 @@ def start_quiz():
     selected_cases = request.form.getlist('standard_cases')  # 체크박스 선택값을 리스트로 받음
     num_questions = request.form['num_questions']  # 문항 수 받기
     password = request.form['password']  # 비밀번호 받기
-    
-    # 선택된 체크박스 값을 처리하는 로직
-    # 예시: print 문으로 콘솔에 출력
-    print(selected_cases, num_questions, password)
+
+
+    data = merge_json_files(filepath, bankpath, selected_cases)
+    #print(selected_cases, num_questions, password)
     
     # 처리 결과에 따라 다른 페이지로 리디렉트하거나 메시지를 보여줄 수 있음
-    return "퀴즈 시작"  # 처리 결과를 간단한 메시지로 반환
+    return len(data)  # 처리 결과를 간단한 메시지로 반환
