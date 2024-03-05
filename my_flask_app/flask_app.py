@@ -95,4 +95,4 @@ def start_quiz():
     #print(selected_cases, num_questions, password)
     
     # 처리 결과에 따라 다른 페이지로 리디렉트하거나 메시지를 보여줄 수 있음
-    return selected_cases, len(data)  # 처리 결과를 간단한 메시지로 반환
+    return len(data)  # 처리 결과를 간단한 메시지로 반환
