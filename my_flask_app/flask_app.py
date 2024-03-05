@@ -2,11 +2,15 @@ from flask import Flask, render_template, jsonify
 import os
 import json
 import random
+import re
+from fuzzywuzzy import fuzz
 
 app = Flask(__name__)
 
 bankpath = "/home/criminalstudy/KHCA/quizbank"
 filepath = "/home/criminalstudy/KHCA/allquiz"
+
+question_count = 20
 
 def extract_case_numbers(txt_file_path):
     case_numbers = []
@@ -53,10 +57,141 @@ def load_data(directory):
 
     return merged_json_data
 
+def is_similar(user_answer, correct_answer):
+    similarity = fuzz.ratio(user_answer, correct_answer)
+    return similarity
+
+def is_correct(user_answer, correct_answer):
+
+    if user_answer == 'o':
+        user_answer = '적극'
+
+    if user_answer == 'x':
+        user_answer = '소극'
+
+    if correct_answer.startswith("원칙적 소극") and user_answer == "소극":
+        return True
+    if correct_answer.startswith("원칙적 적극") and user_answer == "적극":
+        return True
+    
+    if correct_answer.startswith("한정 소극") and user_answer == "소극":
+        return True
+    if correct_answer.startswith("한정 적극") and user_answer == "적극":
+        return True
+    
+    try:
+        similarity = is_similar(user_answer, correct_answer)  
+        print(similarity)    
+        if similarity >= 75:
+            return True
+    except:
+        return True
+    
+def select_data_with_exact_length(data, target_length):
+    selected_data = []
+    total_length = 0
+
+    # 데이터를 섞어서 순서에 따른 선택 편향을 제거합니다.
+    random.shuffle(data)
+
+    for item in data:
+        current_item_length = len(item["A"])
+        if total_length + current_item_length <= target_length:
+            selected_data.append(item)
+            total_length += current_item_length
+
+        if total_length >= target_length:
+            break
+
+    # 초과분 처리
+    if total_length > target_length:
+        # 목표 길이를 초과하면 초과분 만큼의 길이를 가진 항목을 제거
+        excess_length = total_length - target_length
+        for item in selected_data:
+            if len(item["A"]) == excess_length:
+                selected_data.remove(item)
+                break  # 필요한 경우 여러 항목을 제거해야 한다면, 이 로직을 수정하세요.
+
+    return selected_data
+
+
 @app.route('/')
-def print_all ():
+def run_quiz(filepath):
+
     data = load_data(filepath)
-    if data:
-        return jsonify(data)
-    else:
-        return jsonify({"error": "No items found"}), 404
+    questions = select_data_with_exact_length(data, min(question_count, len(data)))  # Ensure not to exceed total questions
+    score = 0
+    incorrect_answers = []
+
+    def case_number(text):
+        pattern = r'(선고|자)\s*(.*)'
+        match = re.search(pattern, text)
+        
+        if match:
+            case_num = match.group(2)
+            # 콤마로 첫 부분만 추출
+            comma_index = case_num.find(',')
+            if comma_index != -1:
+                case_num = case_num[:comma_index]
+            # 괄호와 괄호 안의 내용 제거
+            case_num = re.sub(r'\(.*?\)', '', case_num)
+            return case_num.strip()  # 앞뒤 공백 제거
+        else:
+            return ""
+
+    for i, case in enumerate(questions, start=1):
+        print(f"\n문제 {i} / {len(questions)}:")
+        question_score = 0  # Initialize score for the question
+
+        print(case['N'])
+        for q in case['Q']:
+            print(q)
+        print("답안 수:", len(case['A']))
+
+        correct_count = 0
+
+        for correct_answer in case['A']:
+            user_answer = input("\n답변: ").strip()
+            correct = is_correct(user_answer, correct_answer)
+
+            if correct:
+                correct_count += 1
+                print("정답!\n")
+            else:
+                print("오답!\n")
+
+        question_score = correct_count / len(case['A'])
+        print(f"이 문제의 득점: {question_score:.2f}")
+        score += question_score  # Add question score to total score
+
+        # Additional logic for incorrect answers
+        if question_score < 1:
+
+            #법원명 / 사건번호
+            court = "대법원" if "대법원" in case['N'] else "헌법재판소" if "헌법재판소" in case['N'] else ""
+            casenumber = case_number(case['N'])
+
+            #link = "https://casenote.kr/" + court + "/" + casenumber
+            link = "https://bigcase.ai/cases/" + court + "/" + casenumber
+
+            incorrect_answers.append((i, case['Q'], case['A'], link))
+            print(case['A'], prefix="정답:")
+            #format_print(case['R'], prefix="근거:")
+            print(f"참조 링크: {link}")
+            print("\n")
+
+    # Final score and review incorrect answers
+    print('=======================================================')
+    print(f"당신의 점수는 {round(score, 2)}/{len(questions)}.")
+    print(f"정답률: {score/len(questions) * 100:.2f}%\n")
+    
+    # Review incorrect answers
+    if incorrect_answers:
+        print("###오답노트###")
+        for i, question, answer, link in incorrect_answers:
+            print(f"\n문제 {i}:")
+            print(question)
+            print(answer, prefix="정답:")
+            #format_print(reason, prefix="근거:")
+            print(f"참조 링크: {link}")
+        print('=======================================================')
