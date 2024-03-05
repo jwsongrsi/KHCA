@@ -5,8 +5,8 @@ import random
 
 app = Flask(__name__)
 
-bankpath = "home/criminalstudy/KHCA/quizbank"
-filepath = "home/criminalstudy/KHCA/allquiz"
+bankpath = "/home/criminalstudy/KHCA/quizbank"
+filepath = "/home/criminalstudy/KHCA/allquiz"
 
 def extract_case_numbers(txt_file_path):
     case_numbers = []
