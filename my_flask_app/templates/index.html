@@ -50,7 +50,8 @@
             margin-right: 5px;
         }
 
-        .quiz-options input[type="text"] {
+        .quiz-options input[type="text"],
+        .quiz-options input[type="password"] {
             padding: 8px;
             margin: 0 10px;
             border: 1px solid #ccc;
@@ -86,74 +87,21 @@
     <div class="container">
         <h1>형사판례 퀴즈</h1>
         <p>*형법, 형사소송법 판례 공부를 위한 퀴즈 프로그램입니다.</p>
-        <div class="quiz-options">
-            <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
-            <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
-        </div>
-        <div class="quiz-options"> <!-- 새로운 div 태그를 추가하여 문제 수 입력 부분을 별도의 줄로 분리합니다. -->
-            <label>문항 수: <input type="text" id="answerInput" name="answerInput" placeholder="1~200"></label>
-        </div>
-        <button type="button" onclick="startQuiz()">시작하기</button>
-    </div>
+        <form action="/start_quiz" method="post">
+            <div class="quiz-options">
+                <label><input type="checkbox" name="standard_cases" value="형법 표준판례"> 형법 표준판례</label>
+                <label><input type="checkbox" name="standard_cases" value="형사소송법 표준판례"> 형사소송법 표준판례</label>
+            </div>
+            <div class="quiz-options">
+                <label>문항 수: <input type="text" id="answerInput" name="num_questions" placeholder="1~200"></label>
+            </div>
+            <div class="quiz-options">
+                <label>비밀번호: <input type="password" id="passwordInput" name="password" placeholder="비밀번호 입력"></label>
+            </div>
+            <button type="submit">시작하기</button>
+        </form>
     <footer>
         경희대학교 로스쿨 형사법학회
     </footer>
-
-    <script>
-        async function startQuiz() {
-            const quizOptions = document.querySelectorAll('input[name="standard_cases"]:checked');
-            const numberOfQuestions = document.getElementById('answerInput').value;
-            let selectedOptions = [];
-            quizOptions.forEach((option) => {
-                selectedOptions.push(option.value);
-            });
-
-            const baseURL = "https://api.github.com/repos/jwsongrsi/criminalstudy/contents/allquiz";
-            const headers = {
-                "Accept": "application/vnd.github.v3+json"
-            };
-
-            try {
-                // GitHub API로부터 파일 목록 가져오기
-                const response = await fetch(baseURL, { headers: headers });
-                const data = await response.json();
-
-                let quizzes = [];
-                for (const file of data) {
-                    // JSON 파일만 처리
-                    if (file.name.endsWith('.json')) {
-                        const fileResponse = await fetch(file.download_url);
-                        const fileData = await fileResponse.json();
-                        quizzes = quizzes.concat(fileData);
-                    }
-                }
-
-                // 선택된 옵션에 해당하는 문제만 필터링
-                quizzes = quizzes.filter(quiz => selectedOptions.includes(quiz.category));
-
-                // 랜덤으로 문제 선택
-                let selectedQuizzes = [];
-                for (let i = 0; i < Math.min(numberOfQuestions, quizzes.length); i++) {
-                    const randomIndex = Math.floor(Math.random() * quizzes.length);
-                    selectedQuizzes.push(quizzes[randomIndex]);
-                    quizzes.splice(randomIndex, 1); // 선택된 문제는 제거
-                }
-
-                // 선택된 문제를 화면에 표시
-                displayQuizzes(selectedQuizzes);
-            } catch (error) {
-                console.error("Quiz loading failed:", error);
-            }
-        }
-
-        function displayQuizzes(quizzes) {
-            const container = document.querySelector('.container');
-            quizzes.forEach((quiz, index) => {
-                const element = document.createElement('div');
-                element.innerHTML = `<p>${index + 1}. ${quiz.question}</p>`;
-                container.appendChild(element);
-            });
-        }
-    </script>
 </body>
 </html>
