@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session, redirect, url_for
 import os
 import json
 import random
@@ -24,7 +24,7 @@ def merge_json_files(directory, txt_directory, selected_cases):
 
     all_case_numbers = []
     for txt_filename in os.listdir(txt_directory):
-        if (txt_filename.endswith('.txt')): # & (txt_filename.replace(".txt", "") in selected_cases)
+        if (txt_filename.endswith('.txt')) & (txt_filename.replace(".txt", "") in selected_cases): 
             txt_file_path = os.path.join(txt_directory, txt_filename)          
             case_numbers = extract_case_numbers(txt_file_path)
             
@@ -87,12 +87,38 @@ def index():
 @app.route('/start_quiz', methods=['POST'])
 def start_quiz():
     selected_cases = request.form.getlist('standard_cases')  # 체크박스 선택값을 리스트로 받음
-    num_questions = request.form['num_questions']  # 문항 수 받기
+    num_questions = int(request.form['num_questions'])  # 문항 수 받기
     password = request.form['password']  # 비밀번호 받기
 
-
     data = merge_json_files(filepath, bankpath, selected_cases)
-    #print(selected_cases, num_questions, password)
+
+    if len(data) < num_questions:
+        questions = data
+    else:
+        questions = random.sample(data, num_questions)
+
+    session['questions'] = questions
+    session['current_index'] = 0
+
+    # 첫 번째 문제로 리다이렉트
+    return redirect(url_for('show_question'))
+
+@app.route('/question')
+def show_question():
+    index = session.get('current_index', 0)
+    questions = session.get('questions', [])
     
-    # 처리 결과에 따라 다른 페이지로 리디렉트하거나 메시지를 보여줄 수 있음
-    return str(len(data))  # 처리 결과를 간단한 메시지로 반환
+    # 모든 문제가 완료되었는지 확인
+    if index >= len(questions):
+        return 'Quiz Completed!'
+
+    # 현재 문제 데이터 가져오기
+    question = questions[index]
+    
+    # 문제를 렌더링하여 사용자에게 보여줌
+    return render_template('question.html', question=question, index=index + 1, total=len(questions))
+
+@app.route('/next_question', methods=['POST'])
+def next_question():
+    session['current_index'] += 1
+    return redirect(url_for('show_question'))
