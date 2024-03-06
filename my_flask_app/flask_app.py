@@ -97,28 +97,4 @@ def start_quiz():
     else:
         questions = random.sample(data, num_questions)
 
-    session['questions'] = questions
-    session['current_index'] = 0
-
-    # 첫 번째 문제로 리다이렉트
-    return redirect(url_for('show_question'))
-
-@app.route('/question')
-def show_question():
-    index = session.get('current_index', 0)
-    questions = session.get('questions', [])
-    
-    # 모든 문제가 완료되었는지 확인
-    if index >= len(questions):
-        return 'Quiz Completed!'
-
-    # 현재 문제 데이터 가져오기
-    question = questions[index]
-    
-    # 문제를 렌더링하여 사용자에게 보여줌
-    return render_template('question.html', question=question, index=index + 1, total=len(questions))
-
-@app.route('/next_question', methods=['POST'])
-def next_question():
-    session['current_index'] += 1
-    return redirect(url_for('show_question'))
+    return questions
