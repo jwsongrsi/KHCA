@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+</head>
+<body>
+    <form action="/next_question" method="POST">
+        <h2>문제 {{ question_id }}.</h2>
+        <p>{{ question }}</p>
+        <input type="text" name="answer" required>
+        <input type="submit" value="제출">
+    </form>
+</body>
+</html>

@@ -97,4 +97,32 @@ def start_quiz():
     else:
         questions = random.sample(data, num_questions)
 
-    return questions
+    session['questions'] = questions
+    session['current_question'] = 0  # 현재 질문의 인덱스
+    session['answers'] = []  # 사용자의 답변을 저장할 리스트
+
+    return redirect(url_for('show_question'))
+
+@app.route('/show_question', methods=['GET', 'POST'])
+def show_question():
+    question_id = session.get('current_question')
+    questions = session.get('questions')
+    
+    if question_id is None or question_id >= len(questions):
+        return redirect(url_for('quiz_complete'))  # 모든 질문이 완료되면 다른 페이지로 리다이렉트
+
+    question = questions[question_id]
+    return render_template('quiz.html', question_id=question_id+1, question=question)
+
+@app.route('/next_question', methods=['POST'])
+def next_question():
+    answer = request.form['answer']
+    session['answers'].append(answer)  # 사용자의 답변 저장
+    session['current_question'] += 1  # 다음 질문으로 이동
+    
+    return redirect(url_for('show_question'))
+
+@app.route('/quiz_complete')
+def quiz_complete():
+    # 퀴즈 완료 처리, 예: 사용자의 답변을 평가하거나 결과 페이지를 보여줍니다.
+    return "퀴즈 완료! 당신의 답변은: " + ", ".join(session['answers'])
