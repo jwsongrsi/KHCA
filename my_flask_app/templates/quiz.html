@@ -1,14 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2, p {
+            text-align: center;
+            color: #333;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            width: calc(100% - 16px); /* Adjust width to ensure it fits well */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        input[type="submit"] {
+            display: block;
+            width: 200px;
+            padding: 8px 0;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 20px auto;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <form action="/next_question" method="POST">
-        <h2>문제 {{ question_id }}.</h2>
-        <p>{{ question }}</p>
-        <input type="text" name="answer" required>
-        <input type="submit" value="제출">
-    </form>
+    <div class="container">
+        <form action="/next_question" method="POST">
+            <h2>문제 {{ question_id }}. {{question['N']}}</h2>
+            <p>{{ question['Q'] }}</p>
+            <input type="text" name="answer" required>
+            <input type="submit" value="제출">
+        </form>
+    </div>
 </body>
 </html>
