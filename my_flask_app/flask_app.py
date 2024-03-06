@@ -6,6 +6,7 @@ import re
 from fuzzywuzzy import fuzz
 
 app = Flask(__name__)
+app.secret_key = 'wnsdnjs9712*' 
 
 bankpath = "/home/criminalstudy/KHCA/quizbank"
 filepath = "/home/criminalstudy/KHCA/allquiz"
